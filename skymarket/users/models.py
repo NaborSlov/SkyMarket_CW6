@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractBaseUser, AbstractUser
+from django.core.validators import MinLengthValidator
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -18,12 +19,12 @@ class UserRoles:
 class User(AbstractBaseUser):
     # TODO переопределение пользователя.
     # TODO подробности также можно поискать в рекоммендациях к проекту
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    phone = PhoneNumberField()
-    email = models.EmailField(unique=True)
-    role = models.CharField(max_length=6, choices=UserRoles.choices, default="user")
-    image = models.ImageField()
+    first_name = models.CharField(max_length=64, validators=[MinLengthValidator(1)], verbose_name="Имя")
+    last_name = models.CharField(max_length=64, validators=[MinLengthValidator(1)], verbose_name="Фамилия")
+    phone = PhoneNumberField(max_length=128, validators=[MinLengthValidator(1)], verbose_name="Номер телефона")
+    email = models.EmailField(max_length=254, validators=[MinLengthValidator(1)], unique=True)
+    role = models.CharField(max_length=6, choices=UserRoles.choices, default="user", verbose_name="Роль")
+    image = models.ImageField(verbose_name="Картинка", null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'email'
@@ -52,3 +53,6 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_admin
+
+    def __str__(self):
+        return self.email
