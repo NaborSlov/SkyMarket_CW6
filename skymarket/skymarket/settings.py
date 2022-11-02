@@ -99,11 +99,12 @@ SIMPLE_JWT = {
 DJOSER = {
     "SERIALIZERS": {
         'user_create': 'users.serializers.UserRegistrationSerializer',
-        'user': 'users.serializers.CurrentUserSerializer'
+        'user': 'users.serializers.CurrentUserSerializer',
+        'current_user': 'users.serializers.CurrentUserSerializer'
     },
     'LOGIN_FIELD': 'email',
-    'SEND_ACTIVATION_EMAIL': True,
-    'PASSWORD_RESET_CONFIRM_URL': "#/api/users/reset_password_confirm/{uid}/{token}"
+    # 'SEND_ACTIVATION_EMAIL': True,
+    # 'PASSWORD_RESET_CONFIRM_URL': "#/api/users/reset_password_confirm/{uid}/{token}"
 }
 
 # Database
