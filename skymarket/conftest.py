@@ -34,9 +34,9 @@ def user_client(user_api):
 @pytest.fixture
 def admin_api(db):
     user = User.objects.create_superuser(
-        first_name="test name",
-        last_name="test last_name",
-        email="test@mail.ru",
+        first_name="test name admin",
+        last_name="test last_name admin",
+        email="testadmin@mail.ru",
         phone="+79224846016"
     )
 

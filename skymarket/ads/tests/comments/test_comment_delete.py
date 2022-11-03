@@ -13,8 +13,8 @@ def test_comment_delete(user_client, user_api, ad):
 
 
 @pytest.mark.django_db
-def test_comment_admin_delete(api_admin_client, admin_api, ad):
-    comment = Comment.objects.create(ad=ad, author=admin_api)
+def test_comment_admin_delete(api_admin_client, user_api, ad):
+    comment = Comment.objects.create(ad=ad, author=user_api)
 
     response = api_admin_client.delete(f"/api/ads/{ad.pk}/comments/{comment.pk}/")
 

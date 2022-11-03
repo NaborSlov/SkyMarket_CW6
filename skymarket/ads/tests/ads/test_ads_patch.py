@@ -33,12 +33,12 @@ def test_patch_ads(user_client, user_api):
 
 
 @pytest.mark.django_db
-def test_admin_patch_ads(api_admin_client, admin_api):
+def test_admin_patch_ads(api_admin_client, user_api):
     data = {
         "title": "test title patch",
         "price": 2000,
         "description": "test description patch",
-        "author_id": admin_api.pk
+        "author_id": user_api.pk
     }
 
     ad = Ad.objects.create(**data)
@@ -54,7 +54,7 @@ def test_admin_patch_ads(api_admin_client, admin_api):
         "description": "test description patch",
         "author_first_name": "test name",
         "author_last_name": "test last_name",
-        "author_id": admin_api.pk
+        "author_id": user_api.pk
     }
 
     assert response.status_code == 200
