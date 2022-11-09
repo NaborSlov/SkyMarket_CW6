@@ -1,7 +1,6 @@
 from typing import List
 
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
 
 from ads.models import Comment, Ad
 
@@ -10,9 +9,12 @@ from ads.models import Comment, Ad
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author_first_name = serializers.CharField(max_length=50, read_only=True)
-    author_last_name = serializers.CharField(max_length=50, read_only=True)
-    author_image = serializers.ImageField(read_only=True)
+    author_first_name = serializers.SerializerMethodField()  # поле с работой от метода
+    author_last_name = serializers.CharField(source="author.last_name", read_only=True)  # получения значения из связанного поля
+    author_image = serializers.ImageField(source="author.image", read_only=True)
+
+    def get_author_first_name(self, obj):  # get_* и название MethodFild. В obj передается полученный объект из базы данных
+        return obj.author.first_name
 
     class Meta:
         model = Comment
@@ -27,25 +29,6 @@ class CommentSerializer(serializers.ModelSerializer):
             "author_image"
         ]
 
-    def get_fields(self):
-        data = getattr(self, "instance", None)
-
-        if isinstance(data, List):
-            for obj in data:
-                author = getattr(obj, 'author', None)
-
-                obj.author_first_name = author.first_name
-                obj.author_last_name = author.last_name
-                obj.author_image = author.image
-        elif data:
-            author = getattr(data, 'author', None)
-
-            self.instance.author_first_name = author.first_name
-            self.instance.author_last_name = author.last_name
-            self.instance.author_image = author.image
-
-        return super().get_fields()
-
 
 class AdListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -54,9 +37,9 @@ class AdListSerializer(serializers.ModelSerializer):
 
 
 class AdSerializer(serializers.ModelSerializer):
-    author_first_name = serializers.CharField(max_length=50, read_only=True)
-    author_last_name = serializers.CharField(max_length=50, read_only=True)
-    phone = serializers.CharField(max_length=10, read_only=True)
+    author_first_name = serializers.CharField(source="author.first_name", read_only=True)
+    author_last_name = serializers.CharField(source="author.last_name", read_only=True)
+    phone = serializers.CharField(source="author.phone", read_only=True)
 
     class Meta:
         model = Ad
@@ -72,21 +55,3 @@ class AdSerializer(serializers.ModelSerializer):
             'author_id'
         ]
 
-    def create(self, validated_data):
-        ad = super().create(validated_data)
-
-        ad.author_first_name = ad.author.first_name
-        ad.author_last_name = ad.author.last_name
-        ad.phone = ad.author.phone
-
-        return ad
-
-    def get_fields(self):
-        author = getattr(self.instance, 'author', None)
-
-        if author:
-            self.instance.author_first_name = author.first_name
-            self.instance.author_last_name = author.last_name
-            self.instance.phone = author.phone
-
-        return super().get_fields()
